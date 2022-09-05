@@ -12,6 +12,7 @@ app.get('/', async (req, res) => {
   }
 })
 
+
 app.get('/:id', verifyDynosaur, async (req, res) => {
   res.status(201).json(req.dynosaur)
 })
