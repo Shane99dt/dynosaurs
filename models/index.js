@@ -2,7 +2,9 @@ const { Sequelize } = require('sequelize')
 
 const sequelize = new Sequelize('dynosaurs', 'root', 'root', {
   host: 'localhost',
-  dialect: 'mysql'
+  dialect: 'mysql',
+  logging: false
+  // logging TRUE shows every request that made to the db
 })
 
 const connectDb = async () => {
