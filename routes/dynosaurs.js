@@ -1,11 +1,20 @@
 const express = require('express')
-const { verifyDynosaur, checkIfExists, checkIfExistsUpdate } = require('../middlewares/dynosaursMW')
+const { verifyDynosaur, checkIfExists } = require('../middlewares/dynosaursMW')
 const app = express()
 const { Dynosaur } = require('../models/index')
 
 app.get('/', async (req, res) => {
   try{
-    const dynosaurs = await Dynosaur.findAll()
+    let YearOfAppearanceOrder = req.query.yearOfAppearance
+    let order = {}
+
+    if(YearOfAppearanceOrder){
+      order = {
+        order: [['yearOfAppearance', YearOfAppearanceOrder]]
+      }
+    }
+
+    const dynosaurs = await Dynosaur.findAll(order)
     res.json(dynosaurs)
   }catch(e){
     res.status(500).json('Internal server error')
@@ -28,7 +37,7 @@ app.post('/', checkIfExists, async (req, res) => {
 })
 
 
-app.put('/:id', verifyDynosaur, checkIfExistsUpdate, async (req, res) => {
+app.put('/:id', verifyDynosaur, checkIfExists, async (req, res) => {
   // with the method use
   // const dynosaur = req.dynosaur
   // dynosaur.set(req.body)
@@ -50,11 +59,7 @@ app.put('/:id', verifyDynosaur, checkIfExistsUpdate, async (req, res) => {
 app.delete('/:id', verifyDynosaur, async (req, res) => {
   const { id } = req.params
   try{
-    const dynosaur = await Dynosaur.destroy({
-      where: {
-        id
-      }
-    })
+    const dynosaur = await Dynosaur.destroy({ where: { id }})
     res.status(204).json('No content')
   }catch(e){
     res.status(500).json("Internal server error")
