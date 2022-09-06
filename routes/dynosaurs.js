@@ -29,10 +29,21 @@ app.post('/', checkIfExists, async (req, res) => {
 
 
 app.put('/:id', verifyDynosaur, checkIfExistsUpdate, async (req, res) => {
-  const dynosaur = req.dynosaur
-  dynosaur.set(req.body)
-  await dynosaur.save()
-  res.json(dynosaur)
+  // with the method use
+  // const dynosaur = req.dynosaur
+  // dynosaur.set(req.body)
+  // await dynosaur.save()
+  // res.json(dynosaur)
+
+  // with the method update
+  try{
+    const { id } = req.params
+    await Dynosaur.update( req.body, { where : { id }})
+    const dynosaur = await Dynosaur.findOne({ where: { id }})
+    res.status(201).json(dynosaur)
+  }catch(e){
+    res.status(500).json("Internal server error")
+  }
 })
 
 
@@ -44,7 +55,7 @@ app.delete('/:id', verifyDynosaur, async (req, res) => {
         id
       }
     })
-    res.status(204)
+    res.status(204).json('No content')
   }catch(e){
     res.status(500).json("Internal server error")
   }
